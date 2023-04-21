@@ -1,10 +1,23 @@
 const tinyInput = document.querySelector(".tinyInput")
 
+
 export default function initEditor(){
     tinyInput.innerHTML =  `  
 <textarea>
   Börja författa ditt inlägg här
-</textarea>`
+</textarea>
+
+<button class="sendBtn" action=send>PUBLICERA</button>`
+
+
+
+const sendBtn = document.querySelector('.sendBtn')
+sendBtn.addEventListener("click", sendBtnFunc)
+
+function sendBtnFunc(){
+  console.log("Publiceraknapp");
+}
+
 
 tinymce.init({
 selector: 'textarea',
