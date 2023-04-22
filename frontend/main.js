@@ -1,15 +1,18 @@
 import initEditor from "./js/editor.js";
+import fetchAll from "./js/fetchAll.js"
 const loggedIn = localStorage.getItem("loggedIn");
+const login = document.querySelector(".login");
 
 if (loggedIn === "true") {
-  initEditor();
+  fetchAll();
+  login.classList.add("hidden");
 } else {
-  const login = document.querySelector(".login");
   login.addEventListener("click", clickLogin);
-
-  function clickLogin(){
+  
+  function clickLogin() {
     localStorage.setItem("loggedIn", "true");
     console.log("Loggades in");
-    initEditor();
+    fetchAll();
+    login.classList.add("hidden");
   }
 }

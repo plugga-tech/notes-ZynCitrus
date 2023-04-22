@@ -3,18 +3,27 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mysql = require('mysql2');
+var cors = require('cors')
+const app = express();
+app.use(cors())
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postRouter = require('./routes/posts');
 
-const app = express();
+
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    req.con = con;
+    next();
+  })
+
 
 const con = mysql.createConnection({
   host: 'localhost',
@@ -27,6 +36,7 @@ con.connect(function(err) {
   if (err) throw err;
   console.log('Anslutning till MySQL lyckades!');
 });
+
 
 app.get('/posts', (req, res) => {
     res.render("index", {sample: 'sample text'})
