@@ -1,61 +1,99 @@
-export default function initEditor() {
-  const tinyInput = document.querySelector('.tinyInput');
+const container = document.querySelector('.postsContainer');
 
-  tinyInput.innerHTML = `
-    <form id="post-form" action="/" method="POST">
-      <label for="title">Titel:</label>
-      <input type="text" id="title" name="title" required>
+export default function fetchAll() {
+  fetch('http://localhost:3001/posts/all')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      if (Array.isArray(data)) {
+        data.forEach((row, index) => {
+          const rowElement = document.createElement('div');
+          const rowId = `row-${row.id}`; // Use the ID of the single object as the row ID
+          rowElement.innerHTML = `
+            <h2 contenteditable="true" data-field="title">${row.saveTitle}</h2>
+            <p>Author: <span contenteditable="true" data-field="author">${row.saveAuthor}</span></p>
+            <div class="editor" id="${rowId}">${row.saveContent}</div>
+            <button class="saveButton" data-id="${row.id}">Save Changes</button>
+            <button class="deleteButton" data-id="${row.id}">Delete Post</button>
+          `;
+          container.appendChild(rowElement);
 
-      <label for="author">Författare:</label>
-      <input type="text" id="author" name="author" required>
+          tinymce.init({
+            selector: `#${rowId}`, // Use the generated ID as the selector
+            height: 300,
+            menubar: false,
+            plugins: [
+              'advlist autolink lists link image charmap print preview anchor',
+              'searchreplace visualblocks code fullscreen',
+              'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | \
+              alignleft aligncenter alignright alignjustify | \
+              bullist numlist outdent indent | removeformat | help'
+          });
 
-      <label for="content">Innehåll:</label>
-      <textarea id="content" name="content" required></textarea>
+          // Add event listener for save button clicks
+          const saveButton = rowElement.querySelector('.saveButton');
+          saveButton.addEventListener('click', () => {
+            const postId = saveButton.getAttribute('data-id');
+            const row = document.querySelector(`[data-id="${postId}"]`);
+            console.log(row); // add this line to check the value of row
+            const title = row.querySelector('[data-field="title"]').textContent;
+            const author = row.querySelector('[data-field="author"]').textContent;
+            const content = tinymce.get(row.querySelector('.editor').getAttribute('id')).getContent();
+          
+            fetch(`/posts/${postId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                saveTitle: title,
+                saveAuthor: author,
+                saveContent: content
+              })
+            })
+            .then(response => {
+              if (response.ok) {
+                alert('Post updated successfully!');
+                location.reload();
+              } else {
+                throw new Error('Error updating post!');
+              }
+            })
+            .catch(error => {
+              console.error(error);
+              alert('Error updating post!');
+            });
+          });
 
-      <button type="submit">Lägg till post</button>
-    </form>
+          // Add event listener for delete button clicks
+          const deleteButton = rowElement.querySelector('.deleteButton');
+          deleteButton.addEventListener('click', () => {
+            const postId = deleteButton.getAttribute('data-id');
+            fetch(`http://localhost:3000/posts/delete/${postId}`, {
+              method: 'DELETE'
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                container.removeChild(rowElement);
+              })
+              .catch(error => console.error(error));
+          });
 
-    <div class="data-container">
-    </div>
-  `;
-
-  const postForm = document.querySelector('#post-form');
-  postForm.addEventListener('submit', submitForm);
-
-  function submitForm(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-
-    fetch('/', {
-      method: 'POST',
-      body: formData
+          // Make the post clickable and editable
+          rowElement.addEventListener('click', () => {
+            rowElement.setAttribute('contenteditable', 'true');
+            rowElement.focus();
+          });
+        });
+      } else {
+        console.error('Data is not an array');
+      }
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.text();
-      })
-      .then(html => {
-        const dataContainer = document.querySelector('.data-container');
-        dataContainer.innerHTML = html;
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-      });
-  }
-
-  tinymce.init({
-    selector: 'textarea',
-    height: '500',
-    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
-    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-    tinycomments_mode: 'embedded',
-    tinycomments_author: 'Author name',
-    mergetags_list: [
-      { value: 'First.Name', title: 'First Name' },
-      { value: 'Email', title: 'Email' },
-    ]
-  });
-};
+    .catch(error => {
+      console.error(error);
+      container.textContent = 'Error retrieving data';
+    });
+}

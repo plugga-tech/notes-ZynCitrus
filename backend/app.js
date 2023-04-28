@@ -1,17 +1,16 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const mysql = require('mysql2');
-var cors = require('cors')
+const cors = require('cors');
+
 const app = express();
-app.use(cors())
+app.use(cors());
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var postRouter = require('./routes/posts');
-
-
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const postRouter = require('./routes/posts');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -19,35 +18,40 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((req, res, next) => {
-    req.con = con;
-    next();
-  })
-
-
 const con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'root',
-  database: 'posts'
+  database: 'posts',
 });
 
-con.connect(function(err) {
+con.connect(function (err) {
   if (err) throw err;
   console.log('Anslutning till MySQL lyckades!');
 });
 
+app.use((req, res, next) => {
+  req.con = con;
+  next();
+});
 
 app.get('/posts', (req, res) => {
-    res.render("index", {sample: 'sample text'})
-})
+  res.render('index', { sample: 'sample text' });
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts', postRouter);
 
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
+
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
