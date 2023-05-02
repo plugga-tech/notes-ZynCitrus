@@ -14,10 +14,35 @@
     <link rel="stylesheet" href="./css/main.css" />
   </head>
   <body>
-    <div class="tinyInput">
-      <button class="login">LOGGA IN</button>
-    </div>
+    <header>Coolaste CMS:n du sett, designmässigt</header>
+    <div class="containerWrapper">
+      <div class="tinyInput">
+        <button class="login">LOGGA IN</button>
+      </div>
 
-    <div class="postsContainer"></div>
+      <div class="postsContainer">
+        <div class="buttonContainer"></div>
+      </div>
+    </div>
+    <script
+      src="https://cdn.tiny.cloud/1/eygjyihl4ggxkxift95n5yma4p8lbqgckxfz0yyx3chs4awr/tinymce/6/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+    <script>
+      tinymce.init({
+        selector: ".tinymce",
+        fontsize_formats:
+          "2pt 4pt 6pt 8pt 10pt 12pt 14pt 18pt 20pt 22pt 24pt 26pt 28pt 30pt 32pt 34pt 36pt",
+        height: 600,
+        plugins: [
+          "powerpaste advlist advtable autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+          "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+          "save table contextmenu directionality emoticons template paste textcolor",
+          "filemanager",
+        ],
+        inline: true,
+        menubar: "file edit view insert format tools table tc help",
+      });
+    </script>
   </body>
 </html>

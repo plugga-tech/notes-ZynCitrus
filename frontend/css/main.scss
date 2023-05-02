@@ -1,3 +1,68 @@
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  min-width: 100vw;
+  max-height: 15vh;
+  font-size: 150px;
+  text-align: center;
+}
+
+.containerWrapper {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+    width: 100vw;
+  max-height: 85vh;
+}
+
+.buttonContainer {
+
+}
+
+.row-title {
+  font-size: 30px;
+  color: green;
+  text-decoration: underline;
+}
+
+.author {
+  font-style: oblique;}
+
 .hidden {
     display: none;
+  }
+
+  .rowElement {
+    width: 100vw;
+  }
+
+
+  .editor {
+    max-height: 30vh;
+    width: 50vw;
+    border: 1px solid black;
+    overflow-y: scroll;
+  }
+
+  .deleteBtn{
+    position: absolute;
+    right: 0;
+  }
+
+  .writeNewAllPosts, .fetchAllbtnNew {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: blue;
+    border-radius: 10%;
+    height: 2vw;
+    
+  }
+
+  .writeNewAllPosts:hover, .fetchAllbtnNew:hover {
+    background-color: green;
   }

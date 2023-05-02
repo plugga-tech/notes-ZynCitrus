@@ -1,0 +1,35 @@
+@host = http://localhost:3000/posts
+
+### Add new post ###
+POST {{host}}/add
+Content-Type: application/json
+
+{
+  "saveTitle": "New post title",
+  "saveAuthor": "John Doe",
+  "saveContent": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+}
+
+### Verify post was added ###
+GET {{host}}/all
+Content-Type: application/json
+
+
+### Update post with ID ###
+POST {{host}}/10
+Content-Type: application/json
+
+{
+  "saveTitle": "Update med rest",
+  "saveAuthor": "Rest",
+  "saveContent": "Content med rest"
+}
+
+
+### Update post with ID 1 ###### Update post with ID 1 ###
+get {{host}}/10
+Content-Type: application/json
+
+###
+DELETE {{host}}/delete/4
+Content-Type: application/json

@@ -43,12 +43,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts', postRouter);
 
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
 
 function normalizePort(val) {
   const port = parseInt(val, 10);

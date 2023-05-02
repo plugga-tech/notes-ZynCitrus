@@ -31,29 +31,7 @@ router.get('/all', (req, res) => {
     });
   });
 
-// Ny
-router.post('/add', (req, res) => {
-  const con = req.con;
-  const { saveTitle, saveAuthor, saveContent } = req.body;
-
-  if (!saveTitle || !saveAuthor || !saveContent) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  const sql = 'INSERT INTO posts (saveTitle, saveAuthor, saveContent) VALUES (?, ?, ?)';
-  const values = [saveTitle, saveAuthor, saveContent];
-
-  con.query(sql, values, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Error adding post');
-    }
-    res.send('Post added successfully');
-  });
-});
-
-
-//Ta bort
+  //Ta bort
 router.delete('/delete/:id', (req, res) => {
   const con = req.con;
   const postId = req.params.id;
@@ -69,26 +47,50 @@ router.delete('/delete/:id', (req, res) => {
   });
 });
 
-// Update a post by ID
-router.put('/posts/:id', (req, res) => {
-  const id = req.params.id;
-  const { saveTitle, saveAuthor, saveContent } = req.body;
-  const sql = 'UPDATE posts SET saveTitle = ?, saveAuthor = ?, saveContent = ? WHERE id = ?';
-  const values = [saveTitle, saveAuthor, saveContent, id];
+// Ny
+router.post('/add', (req, res) => {
 
-  req.con.query(sql, values, (err, result) => {
+  const con = req.con;
+  const { saveTitle, saveAuthor, saveContent } = req.body;
+  console.log(req.body); 
+
+  if (!saveTitle || !saveAuthor || !saveContent) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  const sql = 'INSERT INTO posts (saveAuthor, saveContent, saveTitle) VALUES (?, ?, ?)';
+  const values = [saveAuthor, saveContent, saveTitle];
+  
+  con.query(sql, values, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Error adding post');
+    }
+    res.send('Post added successfully');
+  });
+});
+
+// Update a post by ID
+router.post('/:id', (req, res) => {
+  const con = req.con;
+  const { saveTitle, saveAuthor, saveContent } = req.body;
+  const postId = req.params.id;
+  console.log(req.body);
+
+  if (!saveTitle || !saveAuthor || !saveContent) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  const sql = 'UPDATE posts SET saveAuthor = ?, saveContent = ?, saveTitle = ? WHERE id = ?';
+  const values = [saveAuthor, saveContent, saveTitle, postId];
+
+  con.query(sql, values, (err, result) => {
     if (err) {
       console.error(err);
       return res.status(500).send('Error updating post');
     }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).send('Post not found');
-    }
-
     res.send('Post updated successfully');
   });
 });
-
 
 module.exports = router;
